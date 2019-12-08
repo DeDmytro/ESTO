@@ -14,11 +14,13 @@ class UsersTest extends TestCase
     protected $base = '/graphql/users?query=';
 
     /**
-     * A basic feature test example.
-     *
+     * Test index and create endpoints for:
+     * - not logged
+     * - common user (not admin)
+     * - admin
      * @return void
      */
-    public function testExample()
+    public function testIndexAndCreateEndpoints()
     {
         $usersIndexQuery = '{ index {id name email isAdmin}}';
         $indexQuery = $this->base . $usersIndexQuery;
