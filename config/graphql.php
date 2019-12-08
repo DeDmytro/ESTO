@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-use example\Type\ExampleType;
-use example\Query\ExampleQuery;
-use example\Mutation\ExampleMutation;
-use example\Type\ExampleRelationType;
+use App\GraphQL\Mutations\UserCreateMutation;
+use App\GraphQL\Queries\UsersQuery;
+use Rebing\GraphQL\GraphQLController;
+use Rebing\GraphQL\Support\PaginationType;
 
 return [
 
@@ -42,7 +42,7 @@ return [
     //     'mutation' => '\Rebing\GraphQL\GraphQLController@mutation'
     // ]
     //
-    'controllers' => \Rebing\GraphQL\GraphQLController::class.'@query',
+    'controllers' => GraphQLController::class . '@query',
 
     // Any middleware for the graphql route group
     'middleware' => [],
@@ -101,14 +101,23 @@ return [
     'schemas' => [
         'default' => [
             'query' => [
-                // 'example_query' => ExampleQuery::class,
+                // 'users' => App\GraphQL\Queries\UsersQuery::class
             ],
             'mutation' => [
                 // 'example_mutation'  => ExampleMutation::class,
             ],
             'middleware' => [],
-            'method'     => ['get', 'post'],
+            'method' => ['get', 'post'],
         ],
+        'users' => [
+            'query' => [
+                'index' => UsersQuery::class,
+            ],
+            'mutation' => [
+                'create' => UserCreateMutation::class
+            ],
+            'middleware' => ['auth.admin'],
+        ]
     ],
 
     // The types available in the application. You can then access it from the
@@ -121,6 +130,7 @@ return [
     // ]
     //
     'types' => [
+        'user' => App\GraphQL\Types\UserType::class
         // 'example'           => ExampleType::class,
         // 'relation_example'  => ExampleRelationType::class,
         // \Rebing\GraphQL\Support\UploadType::class,
@@ -150,7 +160,7 @@ return [
     'errors_handler' => ['\Rebing\GraphQL\GraphQL', 'handleErrors'],
 
     // You can set the key, which will be used to retrieve the dynamic variables
-    'params_key'    => 'variables',
+    'params_key' => 'variables',
 
     /*
      * Options to limit the query complexity and depth. See the doc
@@ -158,8 +168,8 @@ return [
      * for details. Disabled by default.
      */
     'security' => [
-        'query_max_complexity'  => null,
-        'query_max_depth'       => null,
+        'query_max_complexity' => null,
+        'query_max_depth' => null,
         'disable_introspection' => false,
     ],
 
@@ -167,17 +177,17 @@ return [
      * You can define your own pagination type.
      * Reference \Rebing\GraphQL\Support\PaginationType::class
      */
-    'pagination_type' => \Rebing\GraphQL\Support\PaginationType::class,
+    'pagination_type' => PaginationType::class,
 
     /*
      * Config for GraphiQL (see (https://github.com/graphql/graphiql).
      */
     'graphiql' => [
-        'prefix'     => '/graphiql',
-        'controller' => \Rebing\GraphQL\GraphQLController::class.'@graphiql',
+        'prefix' => '/graphiql',
+        'controller' => GraphQLController::class . '@graphiql',
         'middleware' => [],
-        'view'       => 'graphql::graphiql',
-        'display'    => env('ENABLE_GRAPHIQL', true),
+        'view' => 'graphql::graphiql',
+        'display' => env('ENABLE_GRAPHIQL', true),
     ],
 
     /*

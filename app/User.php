@@ -55,7 +55,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'role'
+        'role_id'
     ];
 
     /**
@@ -97,6 +97,6 @@ class User extends Authenticatable
      */
     public function getIsAdminAttribute()
     {
-        return $this->attributes['role_id'] == self::ROLE_ADMIN;
+        return $this->role_id == self::ROLE_ADMIN;
     }
 }
