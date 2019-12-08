@@ -90,4 +90,13 @@ class User extends Authenticatable
     {
         return $this->hasMany(Transaction::class)->latest();
     }
+
+    /**
+     * Return whether current user is admin
+     * @return bool
+     */
+    public function getIsAdminAttribute()
+    {
+        return $this->attributes['role_id'] == self::ROLE_ADMIN;
+    }
 }
