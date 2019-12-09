@@ -46,6 +46,10 @@ class UsersQuery extends Query
             'email' => [
                 'name' => 'email',
                 'type' => Type::string()
+            ],
+            'limit' => [
+                'name' => 'limit',
+                'type' => Type::int()
             ]
         ];
     }
@@ -61,7 +65,7 @@ class UsersQuery extends Query
      */
     public function resolve($root, $args, $context, ResolveInfo $resolveInfo, Closure $getSelectFields)
     {
-        $query = User::query();
+        $query = User::withDebit();
 
         if (isset($args['id'])) {
             $query->where('id', $args['id']);
@@ -69,6 +73,10 @@ class UsersQuery extends Query
 
         if (isset($args['email'])) {
             $query->where('email', $args['email']);
+        }
+
+        if (isset($args['limit'])) {
+            $query->take($args['limit']);
         }
 
         return $query->get();

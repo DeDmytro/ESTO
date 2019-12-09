@@ -49,6 +49,11 @@ class UserType extends GraphQLType
                 'type' => Type::boolean(),
                 'description' => 'True, if the queried user is admin',
                 'selectable' => false,
+            ],
+            'debit' => [
+                'type' => Type::float(),
+                'description' => 'User debit sum',
+                'selectable' => false,
             ]
         ];
     }

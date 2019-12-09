@@ -8,6 +8,7 @@ use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\DatabaseNotificationCollection;
@@ -45,6 +46,7 @@ use Illuminate\Support\Carbon;
  * @mixin Eloquent
  * @property-read bool $is_admin
  * @property-read UserTransactionsService $wallet
+ * @method static Builder|User withDebit()
  */
 class User extends Authenticatable
 {
@@ -76,6 +78,7 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'debit' => 'float',
     ];
 
     /**
@@ -110,5 +113,17 @@ class User extends Authenticatable
     public function getWalletAttribute()
     {
         return app(UserTransactionsService::class, ['user' => $this]);
+    }
+
+    /**
+     * Return users with balance attribute (sum of all debit transactions)
+     * @param Builder $query
+     * @return Builder|\Illuminate\Database\Query\Builder
+     */
+    public function scopeWithDebit(Builder $query)
+    {
+        return $query->latest()->leftJoin('transactions', function (JoinClause $join) {
+            $join->on('transactions.user_id', '=', 'users.id')->where('transactions.type_id', Transaction::TYPE_DEBIT);
+        })->groupBy('users.id')->selectRaw('users.*, SUM(transactions.amount) AS debit');
     }
 }

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\GraphQL\Types;
 
 use App\Models\Transaction;
-use GraphQL;
 use GraphQL\Type\Definition\Type;
 use Rebing\GraphQL\Support\Type as GraphQLType;
 
@@ -33,7 +32,7 @@ class TransactionType extends GraphQLType
             ],
             'user_id' => [
                 'type' => Type::int(),
-                'description' => 'The user id of the user'
+                'description' => 'The user id of the related user'
             ],
             'type_id' => [
                 'type' => Type::int(),
@@ -42,10 +41,6 @@ class TransactionType extends GraphQLType
             'amount' => [
                 'type' => Type::int(),
                 'description' => 'The amount of transaction'
-            ],
-            'user' => [
-                'type' => GraphQL::type('user'),
-                'description' => 'Related user',
             ],
         ];
     }
