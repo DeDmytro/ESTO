@@ -3,14 +3,16 @@
 namespace Tests\Feature;
 
 use App\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\Response;
 use Str;
 use Tests\TestCase;
 
 class UsersTest extends TestCase
 {
+    /**
+     * Url base for test
+     * @var string
+     */
     protected $base = '/graphql/users?query=';
 
     /**
@@ -64,10 +66,8 @@ class UsersTest extends TestCase
         $response->assertJson([
             'data' => [
                 'create' => [
-                    [
-                        'name' => $userName,
-                        'email' => $userEmail,
-                    ]
+                    'name' => $userName,
+                    'email' => $userEmail,
                 ]
             ]
         ]);

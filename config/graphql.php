@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\GraphQL\Mutations\TransactionCreateMutation;
 use App\GraphQL\Mutations\UserCreateMutation;
 use App\GraphQL\Queries\UsersQuery;
 use Rebing\GraphQL\GraphQLController;
@@ -117,7 +118,13 @@ return [
                 'create' => UserCreateMutation::class
             ],
             'middleware' => ['auth.admin'],
-        ]
+        ],
+        'transactions' => [
+            'mutation' => [
+                'create' => TransactionCreateMutation::class
+            ],
+            'middleware' => ['auth'],
+        ],
     ],
 
     // The types available in the application. You can then access it from the
@@ -130,7 +137,8 @@ return [
     // ]
     //
     'types' => [
-        'user' => App\GraphQL\Types\UserType::class
+        'user' => App\GraphQL\Types\UserType::class,
+        'transaction' => App\GraphQL\Types\TransactionType::class,
         // 'example'           => ExampleType::class,
         // 'relation_example'  => ExampleRelationType::class,
         // \Rebing\GraphQL\Support\UploadType::class,

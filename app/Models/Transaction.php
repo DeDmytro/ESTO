@@ -43,6 +43,14 @@ class Transaction extends Model
     ];
 
     /**
+     * {@inheritdoc}
+     * @var array
+     */
+    protected $casts = [
+        'amount' => 'float'
+    ];
+
+    /**
      * Transaction types const
      * @const int
      */

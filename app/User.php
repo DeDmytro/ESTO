@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Models\Transaction;
+use App\Services\UserTransactionsService;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -42,6 +43,8 @@ use Illuminate\Support\Carbon;
  * @method static Builder|User whereRoleId($value)
  * @method static Builder|User whereUpdatedAt($value)
  * @mixin Eloquent
+ * @property-read bool $is_admin
+ * @property-read UserTransactionsService $wallet
  */
 class User extends Authenticatable
 {
@@ -98,5 +101,14 @@ class User extends Authenticatable
     public function getIsAdminAttribute()
     {
         return $this->role_id == self::ROLE_ADMIN;
+    }
+
+    /**
+     * Return user wallet
+     * @return UserTransactionsService
+     */
+    public function getWalletAttribute()
+    {
+        return app(UserTransactionsService::class, ['user' => $this]);
     }
 }

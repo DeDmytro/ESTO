@@ -4,23 +4,22 @@ declare(strict_types=1);
 
 namespace App\GraphQL\Mutations;
 
-use App\User;
-use Arr;
+use App\Models\Transaction;
 use Closure;
 use GraphQL;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;
 use Rebing\GraphQL\Support\Mutation;
 
-class UserCreateMutation extends Mutation
+class TransactionCreateMutation extends Mutation
 {
     /**
      * {@inheritDoc}
      * @var array
      */
     protected $attributes = [
-        'name' => 'Create new user',
-        'model' => User::class
+        'name' => 'Create new transaction',
+        'model' => Transaction::class
     ];
 
     /**
@@ -29,7 +28,7 @@ class UserCreateMutation extends Mutation
      */
     public function type(): Type
     {
-        return GraphQL::type('user');
+        return GraphQL::type('transaction');
     }
 
     /**
@@ -39,18 +38,14 @@ class UserCreateMutation extends Mutation
     public function args(): array
     {
         return [
-            'name' => [
-                'type' => Type::string(),
-                'rules' => ['required']
+            'amount' => [
+                'type' => Type::nonNull(Type::int()),
+                'rules' => ['required', 'integer']
             ],
-            'email' => [
-                'type' => Type::string(),
-                'rules' => ['required', 'email']
-            ],
-            'password' => [
-                'type' => Type::string(),
-                'rules' => ['required', 'min:6', 'max:32']
-            ],
+            'type_id' => [
+                'type' => Type::nonNull(Type::int()),
+                'rules' => ['required', 'between:0,1']
+            ]
         ];
     }
 
@@ -61,10 +56,14 @@ class UserCreateMutation extends Mutation
      * @param $context
      * @param ResolveInfo $resolveInfo
      * @param Closure $getSelectFields
-     * @return User
+     * @return array
      */
     public function resolve($root, $args, $context, ResolveInfo $resolveInfo, Closure $getSelectFields)
     {
-        return User::create(Arr::only($args, ['name', 'email', 'password']));
+        $amount = intval($args['amount']) / 100;
+        $typeId = $args['type_id'];
+        $wallet = auth()->user()->wallet;
+
+        return $typeId == Transaction::TYPE_DEBIT ? $wallet->debit($amount) : $wallet->credit($amount);
     }
 }
